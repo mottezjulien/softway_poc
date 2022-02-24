@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="20220223" author="Julien">
+
+        <createTable tableName="USER">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" primaryKeyName="user_pk"/>
+            </column>
+            <column name="full_name" type="varchar(128)"/>
+            <column name="mail" type="varchar(128)"/>
+            <column name="phone" type="varchar(16)"/>
+        </createTable>
+
+        <createTable tableName="TEMPLATE">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" primaryKeyName="template_pk"/>
+            </column>
+            <column name="code" type="varchar(64)"/>
+            <column name="fr_label" type="text"/>
+        </createTable>
+        <addUniqueConstraint columnNames="code" constraintName="template_code_uniq" tableName="TEMPLATE"/>
+
+        <createTable tableName="NOTIFICATION">
+            <column name="id" type="varchar(64)">
+                <constraints primaryKey="true" primaryKeyName="notification_pk"/>
+            </column>
+            <column name="sender" type="varchar(64)"/>
+            <column name="template" type="varchar(64)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="NOTIFICATION" baseColumnNames="sender"
+                                 constraintName="notification_sender_fk" referencedTableName="USER"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="NOTIFICATION" baseColumnNames="template"
+                                 constraintName="notification_template_fk" referencedTableName="TEMPLATE"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="NOTIFICATION_RECIPIENT">
+            <column name="notification_id" type="varchar(64)">
+                <constraints primaryKey="true" primaryKeyName="notification_recipient_pk_1"/>
+            </column>
+            <column name="user_id" type="varchar(64)">
+                <constraints primaryKey="true" primaryKeyName="notification_recipient_pk_2"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="NOTIFICATION_RECIPIENT" baseColumnNames="notification_id"
+                                 constraintName="notification_recipient_fk_1" referencedTableName="NOTIFICATION"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="NOTIFICATION_RECIPIENT" baseColumnNames="user_id"
+                                 constraintName="notification_recipient_fk_2" referencedTableName="USER"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>
